@@ -108,8 +108,8 @@ IDEAS - Possible future todo items for the tutorials:
 
 (defun f-config-css-fonts (this)
        (load-css (html-document this) "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" )
-       (load-css (html-document this) "/css/quicsearch.css" ))
-
+       (load-css (html-document this) "/css/quicksearch.css" ))
+       
 (defun f-clear (this)
        (setf (text this) ""))
 
@@ -313,9 +313,9 @@ IDEAS - Possible future todo items for the tutorials:
                                                                 border-bottom-right-radius:25px; border-top-right-radius:25px; 
                                                                 height:40px; font-size:18px; width:120px;   "
                                                          ))
-                (results-div (create-div this-content-results :content "results" 
+                (results-div (create-div this-content-results :content ".. well, what are you waiting for?" 
                                                               :class "w3-margin-top w3-text-white" 
-                                                              :style "font-family:Chewy; font-size:18px; line-height:1.3;"))                
+                                                              :style "font-family:Chewy; font-size:18px; line-height:1.3; margin-bottom:120px;"))                
              )
              (set-on-key-up text-box
                             (lambda (obj event)
@@ -328,7 +328,7 @@ IDEAS - Possible future todo items for the tutorials:
                            (lambda (obj)
                                    (setf (text results-div) "") ;; zero out the result div
                                    (setf (place-holder text-box) "Search the site ...")
-                                   (setf (value text-box) "")
+                                   (setf (value text-box) "") ;; zero aout the text box value
                                    (setf (text results-div) "... the submit button is not connected ...")
                                    ))
              ) ;; let*
