@@ -61,7 +61,7 @@ If any, the following updates were made to the tutorials
    feature should be experienced by everyone. I created a package for the purposes of
    testing.
 
-8) Fonts used: Pistara Medium, Soda Fountain, Montserrat, Roboto, Headstay, Barking Cat and Bangers
+8) Fonts used: Pistara Medium, Soda Fountain, Montserrat, Roboto, Headstay, Barking Cat and Chewy.
 
 IDEAS - Possible future todo items for the tutorials:
 
