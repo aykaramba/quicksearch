@@ -13,6 +13,10 @@ Almost no changes were made to the code, so most of the code and comments are by
 SPECIAL NOTE: If you get a chance, you should work through the original tutorial linked above because it demonstrates the use of of live coding directly in the CLOG framework. CLOG is a powerful and mature framework with many features the live coding feature should be experienced by everyone. I created a package for the purposes of
 testing.
 
+# INSTALLATION
+
+Git clone to your local dir, in your favorite Common Lisp enviornment load the app with (ql:quickload :quicksearch) and then (quicksearch:start-app).
+
 # Copyright
 
 All copyright to original code owned by Vincent Dardel.
