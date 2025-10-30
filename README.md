@@ -8,7 +8,7 @@ Tutorial Link: https://web-apps-in-lisp.github.io/isomorphic-web-frameworks/clog
 
 Author of the tutorial: https://github.com/vindarel/
 
-Almost no changes were made to the code, so most of the code and comments are by Vincent Dardel with minor updates by me. I wanted to go through the tutorial, implement the code and see how a quick search based on keystroke input works, package it up and prepare it for adding features. If any, the following updates were made to the tutorials
+Almost no changes were made to the code, so most of the code and comments are by Vincent Dardel with minor updates by me. I wanted to go through the tutorial, implement the code and see how a quick search based on keystroke input works, package it up and prepare it for adding features. 
 
 SPECIAL NOTE: If you get a chance, you should work through the original tutorial linked above because it demonstrates the use of of live coding directly in the CLOG framework. CLOG is a powerful and mature framework with many features the live coding feature should be experienced by everyone. I created a package for the purposes of
 testing.
