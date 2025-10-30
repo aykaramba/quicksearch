@@ -2,6 +2,11 @@
 
 ;; ====[ release ]=====================>
 ;;
+Release: quicksearch.v.0.1-0.0.5.tar.gz
+Feature: Fixed styling code bugs, added ribbon on bottom, updated ribbon on top, updated Quicksearch logo.
+
+;; ====[ release ]=====================>
+;;
 Release: quicksearch.v.0.1-0.0.4.tar.gz
 Feature: Styling and code clean up done. Ready to push to Github.
 
