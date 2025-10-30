@@ -1,4 +1,4 @@
-# New CLOG project
+# QUICKSEARCH - A simple interacive search demo.
 
 
 Complete later.
