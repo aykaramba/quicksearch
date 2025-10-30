@@ -15,7 +15,9 @@ testing.
 
 # INSTALLATION
 
-Git clone to your local dir, in your favorite Common Lisp enviornment load the app with (ql:quickload :quicksearch) and then (quicksearch:start-app).
+1) Git clone to your local dir as appropriate.
+2) Load the system: (ql:quickload :quicksearch)
+3) Start the app: (quicksearch:start-app)
 
 # Copyright
 
