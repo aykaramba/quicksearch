@@ -4,7 +4,8 @@
 ;;;;
 ;;;;                      Title: Quicksearch  -  From tutorial
 ;;;;                    Created: 2025-10-26
-;;;;   Original Tutorial Author: Vincent Dardel (https://dev.to/vindarel)
+;;;;   Original Tutorial Author: @vindarel (https://lisp-journey.gitlab.io)
+;;;;                   License: GPLv3 or Later
 ;;;;         Quicksearch Author: Robert Taylor             
 ;;;;                    License: GPLv3 or Later
 ;;;;
@@ -85,14 +86,16 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;
 
 (defpackage #:quicksearch
-            (:use #:cl #:clog #:clog-web #:str)
-            (:export start-app))
+  (:use #:cl #:clog #:clog-web #:str)
+  (:export start-app))
 
 (in-package :quicksearch)
 
 (defun start-app ()
-       (initialize 'on-new-window :static-root (merge-pathnames "./www/" (asdf:system-source-directory :quicksearch)))
-       (open-browser))
+  (initialize 'on-new-window :static-root 
+              (merge-pathnames "./www/"
+                               (asdf:system-source-directory :quicksearch)))
+  (open-browser))
 
 ;;;
 ;;;
@@ -107,14 +110,14 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;
 
 (defun f-config-css-fonts (this)
-       (load-css (html-document this) "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" )
-       (load-css (html-document this) "/css/quicksearch.css" ))
-       
+  (load-css (html-document this) "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" )
+  (load-css (html-document this) "/css/quicksearch.css" ))
+
 (defun f-clear (this)
-       (setf (text this) ""))
+  (setf (text this) ""))
 
 (defun f-config-bodycolor (this-location this-color)
-       (setf (background-color this-location) this-color))
+  (setf (background-color this-location) this-color))
 
 ;;;
 ;;;
@@ -129,18 +132,16 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;
 
 (defun on-new-window (body)
-       ;; Config - set the background of the application to this default color.
-       (f-config-bodycolor body "#c85007")
-       ;; Add the clog-web look and feel (W3CSS)
-       (clog-web-initialize body)
-       ;; Load up the csss fonts that we need for the app.
-       (f-config-css-fonts body)
-       ;; We are going to use only a single div for the whole app window to have full control over the entire applicaiton frame.
-       (let* (
-               (container-main (create-div body ))
-             )
-             ;; Call the view, render into container-main
-             (f-view-main container-main)))
+  ;; Config - set the background of the application to this default color.
+  (f-config-bodycolor body "#c85007")
+  ;; Add the clog-web look and feel (W3CSS)
+  (clog-web-initialize body)
+  ;; Load up the csss fonts that we need for the app.
+  (f-config-css-fonts body)
+  ;; We are going to use only a single div for the whole app window to have full control over the entire applicaiton frame.
+  (let* ((container-main (create-div body )))
+    ;; Call the view, render into container-main
+    (f-view-main container-main)))
 
 ;;;
 ;;;
@@ -155,25 +156,35 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;
 
 (defun f-view-main (this-container)
-       (let* (
-                ;; frames
-                (frame-menu (create-div this-container :class "w3-padding-bottom w3-margin-bottom " :content ""  :style "z-index:1000; display:flex; flex-direction:column; justify-content: center; align-items: center;"))
-                (frame-app (create-div this-container :class "" :style "display:flex; flex-direction:row; justify-content:center; " ))
-                ;; containers and panels                
-                (frame-app-container (create-div frame-app :class "" :style "width:600px; display:flex; flex-direction:column; justify-content:start; "))
-                (panel-row-results (create-div frame-app-container :class "" ))
-                ;; content
-                (content-instructions (create-div panel-row-results :class "w3-text-white w3-margin-bottom " :style "text-align:left;" ))
-                (content-results (create-div panel-row-results :class "w3-padding-large " :style " display:flex; flex-direction:column; justify-content:start; align-items:center; " ))
-             )
-             ;; Generate products (list).
-             (generate-test-products)
-             ;; Load the menu.
-             (menu frame-menu)
-             ;; Load the instructions text.
-             (instructions content-instructions)
-             ;; Display some products.
-             (add-products content-results)))
+  (let* (;; frames
+         (frame-menu (create-div this-container 
+                                 :class "w3-padding-bottom w3-margin-bottom " 
+                                 :content ""  
+                                 :style "z-index:1000; display:flex; flex-direction:column; justify-content: center; align-items: center;"))
+         (frame-app (create-div this-container 
+                                :class "" 
+                                :style "display:flex; flex-direction:row; justify-content:center; " ))
+         ;; containers and panels                
+         (frame-app-container (create-div frame-app 
+                                          :class "" 
+                                          :style "width:600px; display:flex; flex-direction:column; justify-content:start; "))
+         (panel-row-results (create-div frame-app-container 
+                                        :class "" ))
+         ;; content
+         (content-instructions (create-div panel-row-results 
+                                           :class "w3-text-white w3-margin-bottom " 
+                                           :style "text-align:left;" ))
+         (content-results (create-div panel-row-results 
+                                      :class "w3-padding-large " 
+                                      :style " display:flex; flex-direction:column; justify-content:start; align-items:center; " )))
+    ;; Generate products (list).
+    (generate-test-products)
+    ;; Load the menu.
+    (menu frame-menu)
+    ;; Load the instructions text.
+    (instructions content-instructions)
+    ;; Display some products.
+    (add-products content-results)))
 
 ;;;
 ;;;
@@ -196,144 +207,171 @@ IDEAS - Possible future todo items for the tutorials:
 (defparameter *title-part-2* (list "book" "car" "laptop" "travel" "screwdriver"))
 
 (defclass product ()
-          ((id    :initarg :id       :accessor product-id       :type integere    :documentation "Unique ID")
-           (title :initarg :title    :accessor product-title    :type string)
-           (price :initarg :price    :accessor product-price    :type integer)))
+  ((id    :initarg :id       
+          :accessor product-id       
+          :type integere    
+          :documentation "Unique ID")
+   (title :initarg :title    
+          :accessor product-title    
+          :type string)
+   (price :initarg :price    
+          :accessor product-price    
+          :type integer)))
 
 (defun menu (this-frame)
-            (let* (
-                     (bookmark (create-div this-frame :class "w3-center" :style "width:600px; margin-bottom:20px; border-bottom-width:1px; border-top-width:0px; border-left-width:0px;
-                                                                                 border-right-width:0px; border-style:dashed; border-color:#fff; margin-top:15px; "))
-                     (before-logo (create-div this-frame :style "z-index:2;"))
-                     (logo (create-div this-frame :class "w3-padding" :style "width:600px; border-top-width:2px; border-left-width:0px; border-right-width:0px; 
-                                                                              border-bottom-width:2px; border-color:#fff; border-style:solid; border-radius:5px; z-index:1; "))
-                     (after-logo (create-div this-frame :style "z-index:2;"))
-                  )
-                  (create-img bookmark :url-src "/img/ribbon-top.webp" :style "")
-                  (create-div bookmark :content "" :style "background-color:purple; margin-bottom:2px; margin-top:1px; width:600px; background-color:#fff; height:5px; ")
-                  (create-div before-logo :class "w3-center w3-text-white" 
-                                          :content "CLOG TUTORIAL"
-                                          :style "font-family:Pistara; font-size:16px; font-weight:bold; letter-spacing:5px; background-color:#c85007; 
-                                                  margin-bottom:-15px; padding-left:20px; padding-right:20px;  ")
-                  (create-div logo :class "w3-center w3-text-white" :content "QUICKSEARCH" :style "font-family:Soda Fountain; font-size:113px; " )
-                  (create-div after-logo :class "w3-center w3-text-white" 
-                                         :content "A simple INTEARCTIVE search demo" 
-                                         :style "font-family:Montserrat; font-size:21px; font-weight:600; letter-spacing:1px; background-color:#c85007; 
-                                                 margin-top:-20px; padding-left:20px; padding-right:20px; ")))
+  (let* ((bookmark (create-div this-frame 
+                               :class "w3-center" 
+                               :style "width:600px; margin-bottom:20px; border-bottom-width:1px; 
+                                       border-top-width:0px; border-left-width:0px; border-right-width:0px; 
+                                       border-style:dashed; border-color:#fff; margin-top:15px; "))
+         (before-logo (create-div this-frame :style "z-index:2;"))
+         (logo (create-div this-frame 
+                           :class "w3-padding" 
+                           :style "width:600px; border-top-width:2px; border-left-width:0px; 
+                                   border-right-width:0px; border-bottom-width:2px; border-color:#fff; 
+                                   border-style:solid; border-radius:5px; z-index:1; "))
+         (after-logo (create-div this-frame :style "z-index:2;")))
+    (create-img bookmark :url-src "/img/ribbon-top.webp" :style "")
+    (create-div bookmark 
+                :content ""
+                :style "background-color:purple; margin-bottom:2px; margin-top:1px; width:600px; 
+                        background-color:#fff; height:5px; ")
+    (create-div before-logo 
+                :class "w3-center w3-text-white"
+                :content "CLOG TUTORIAL"
+                :style "font-family:Pistara; font-size:16px; font-weight:bold; letter-spacing:5px; 
+                        background-color:#c85007; margin-bottom:-15px; padding-left:20px; 
+                        padding-right:20px;  ")
+    (create-div logo 
+                :class "w3-center w3-text-white" 
+                :content "QUICKSEARCH" 
+                :style "font-family:Soda Fountain; font-size:113px; " )
+    (create-div after-logo 
+                :class "w3-center w3-text-white"
+                :content "A simple INTEARCTIVE search demo" 
+                :style "font-family:Montserrat; font-size:21px; font-weight:600; letter-spacing:1px; 
+                        background-color:#c85007; margin-top:-20px; padding-left:20px; padding-right:20px; ")))
 
 (defun instructions (this-content)
-       (let* (
-                (content-description (create-div this-content :class ""))
-                (content-hint-1 (create-div this-content :class "w3-margin-top w3-padding-large " :style "display:flex; flex-direction:row;"))
-                (content-hint-2 (create-div this-content :class "" :style "display:flex; flex-direction:row; justify-content:end;"))
-             )
-             (create-div content-description :class ""
-                                             :style "font-family:Roboto; font-weight:300; border-left-width:0px; border-right-width:0px; border-top-width:1px; 
-                                                     border-bottom-width:1px; border-color:#fff; border-style:dashed; padding-top:12px; padding-bottom:12px; "
-                                             :content "In this demo we create a trivial list of semi randomized products.  The purpose of the demo
-                                                       is to explore how a key-up event can be used to poll the list and update the results as
-                                                       we type the query in the search field at the bottom of this demo.")
-             (create-div content-hint-1 :style "font-family:Headstay; font-size:24px; "  
-                                        :content "Hint! ( use these search terms )" 
-                                        :class "")
-             (create-img content-hint-1 :url-src "/img/arrow.webp" 
-                                        :style "width:46px; height:18px; margin-top:24px;")
-             (create-div content-hint-2 :content "CAR TRAVEL LITTLE LAPTOP WHITE BLUE BOOK AWESOME PRETTY SCREWDRIVERS "
-                                        :style "width:300px; font-size:24px; font-family:Barking Cat DEMO; margin-right:60px; "
-                                        :class "w3-center ")))
+  (let* ((content-description (create-div this-content :class ""))
+         (content-hint-1 (create-div this-content 
+                                     :class "w3-margin-top w3-padding-large " 
+                                     :style "display:flex; flex-direction:row;"))
+         (content-hint-2 (create-div this-content 
+                                     :class "" 
+                                     :style "display:flex; flex-direction:row; justify-content:end;")))
+    (create-div content-description 
+                :class ""
+                :style "font-family:Roboto; font-weight:300; border-left-width:0px; border-right-width:0px; border-top-width:1px; 
+                        border-bottom-width:1px; border-color:#fff; border-style:dashed; padding-top:12px; padding-bottom:12px; "
+                :content "In this demo we create a trivial list of semi randomized products.  The purpose of the demo
+                          is to explore how a key-up event can be used to poll the list and update the results as
+                          we type the query in the search field at the bottom of this demo.")
+    (create-div content-hint-1 :style "font-family:Headstay; font-size:24px; "  
+                :content "Hint! ( use these search terms )" 
+                :class "")
+    (create-img content-hint-1 :url-src "/img/arrow.webp" 
+                :style "width:46px; height:18px; margin-top:24px;")
+    (create-div content-hint-2 :content "CAR TRAVEL LITTLE LAPTOP WHITE BLUE BOOK AWESOME PRETTY SCREWDRIVERS "
+                :style "width:300px; font-size:24px; font-family:Barking Cat DEMO; margin-right:60px; "
+                :class "w3-center ")))
 
 (defun random-price ()
   "Return an integer between 1 and 10.000 (price is expressed in cents)."
-       (1+ (random 9999)))
+  (1+ (random 9999)))
 
 (defun random-title ()
-       (let* (
-                (index (random (length *title-part-1*)))
-                (index-2 (random (length *title-part-2*)))
-             )
-             (format nil "~a ~a" (elt *title-part-1* index) (elt *title-part-2* index-2))))
+  (let* ((index (random (length *title-part-1*)))
+         (index-2 (random (length *title-part-2*))))
+    (format nil "~a ~a" (elt *title-part-1* index) (elt *title-part-2* index-2))))
 
 (defun generate-test-products (&optional (nb 100))
-       (dotimes (i nb)
-                (push (make-instance 'product
-                                     :id (incf *product-id*)
-                                     :title (random-title)
-                                     :price (random-price)
-                                     )
-                      *products*)
-                *products*))
+  (dotimes (i nb)
+    (push (make-instance 'product
+                         :id (incf *product-id*)
+                         :title (random-title)
+                         :price (random-price))
+          *products*)
+    *products*))
 
 (defun reset-test-products ()
-       (setf *products* nil)) 
+  (setf *products* nil)) 
 
 (defun print-product (it &optional (stream nil))
   "Print a product title and price on STREAM (return a new string by default)."
-       (format stream "~a - ~f~&" (str:fit 20 (product-title it)) (/ (product-price it) 100)))
+  (format stream "~a - ~f~&" (str:fit 20 (product-title it)) (/ (product-price it) 100)))
 
 (defun print-products (products)
   "Return a list of products as a string (dummy, for test purposes)."
-       (with-output-to-string (s)
-                              (format s "Products:~&")
-                              (dolist (n products)
-                                      (print-product n s))))
+  (with-output-to-string (s)
+    (format s "Products:~&")
+    (dolist (n products)
+      (print-product n s))))
 
 (defun search-products (query &optional (products *products*)) 
   "Search for QUERY in the products title. This would be a DB call."
-       (loop for product in products
-             when (str:containsp (str:downcase query) (str:downcase (product-title product)))
-             collect product))
+  (loop for product in products
+        when (str:containsp (str:downcase query) (str:downcase (product-title product)))
+        collect product))
 
 (defun add-products (this-content-results)
   "Create the search input and a div to contain the products.
    Bind the key-up event of the input field to our filter function."
-       (let* (
-                (search-field (create-div this-content-results :content "" :class "" :style "display:flex; flex-direction:row; align-items:center; width:400px; "))
-                (text-box (create-form-element search-field :text 
-                                                            :placeholder "Search the site ... "
-                                                            :class "w3-padding w3-input w3-text-gray w3-border-left w3-border-top w3-border-bottom test01   "
-                                                            :style "border-bottom-left-radius:25px; border-top-left-radius:25px; height:40px; border-right:0px; outline:none; "))
-                (submit-button (create-div search-field :content "" 
-                                                        :class "w3-button w3-green w3-border-top w3-border-right w3-border-bottom fa fa-search"
-                                                        :style "display:flex; flex-direction:row; justify-content:center; align-items:center;
-                                                                border-bottom-right-radius:25px; border-top-right-radius:25px; 
-                                                                height:40px; font-size:18px; width:120px; "))
-                (results-div (create-div this-content-results :content "Well, what are you waiting for?" 
-                                                              :class "w3-margin-top w3-text-white w3-center" 
-                                                              :style "font-family:Chewy; font-size:18px; line-height:1.3;  border-bottom-width:1px; border-top-width:0px; 
-                                                                      border-left-width:0px; border-right-width:0px; border-color:#fff; border-style:dashed; padding-bottom:16px; width:400px; "))
-                (ribbon-div (create-div this-content-results :class "w3-center w3-padding" :style "margin-bottom:120px; margin-top:2px; border-style:solid; border-top-width:6px; 
-                                                                                                   border-left-width:0px; border-right-width:0px; border-bottom-width:0px; border-color:white; width:400px; " ))
-             )
-             (create-img ribbon-div :url-src "/img/ribbon.webp" :style "margin-top:-26px;" )
-             (set-on-key-up text-box
-                            (lambda (obj event)
-                                    (format t ":key-up, value: ~a~&" (value obj)) ;; logging
-                                    (setf (text results-div) "") ;; zero out the result div
-                                    (handle-filter-product results-div obj event) ;; populate the result div
-                                    ) ;; lambda
-                            ) ;; set
-             (set-on-click submit-button
-                           (lambda (obj)
-                                   (setf (text results-div) "") ;; zero out the result div
-                                   (setf (place-holder text-box) "Search the site ...")
-                                   (setf (value text-box) "") ;; zero aout the text box value
-                                   (setf (text results-div) "... the submit button is not connected ...")))))
+  (let* ((search-field (create-div this-content-results 
+                                   :content "" 
+                                   :class "" 
+                                   :style "display:flex; flex-direction:row; align-items:center; width:400px; "))
+         (text-box (create-form-element search-field 
+                                        :text
+                                        :placeholder "Search the site ... "
+                                        :class "w3-padding w3-input w3-text-gray w3-border-left w3-border-top w3-border-bottom test01   "
+                                        :style "border-bottom-left-radius:25px; border-top-left-radius:25px; height:40px; border-right:0px; outline:none; "))
+         (submit-button (create-div search-field 
+                                    :content ""
+                                    :class "w3-button w3-green w3-border-top w3-border-right w3-border-bottom fa fa-search"
+                                    :style "display:flex; flex-direction:row; justify-content:center; align-items:center;
+                                            border-bottom-right-radius:25px; border-top-right-radius:25px; 
+                                            height:40px; font-size:18px; width:120px; "))
+         (results-div (create-div this-content-results :content "Well, what are you waiting for?" 
+                                  :class "w3-margin-top w3-text-white w3-center" 
+                                  :style "font-family:Chewy; font-size:18px; line-height:1.3;  border-bottom-width:1px; border-top-width:0px; 
+                                          border-left-width:0px; border-right-width:0px; border-color:#fff; border-style:dashed; padding-bottom:16px; width:400px; "))
+         (ribbon-div (create-div this-content-results 
+                                 :class "w3-center w3-padding" 
+                                 :style "margin-bottom:120px; margin-top:2px; border-style:solid; border-top-width:6px;
+                                         border-left-width:0px; border-right-width:0px; border-bottom-width:0px; border-color:white; width:400px; " )))
+    
+    (create-img ribbon-div :url-src "/img/ribbon.webp" :style "margin-top:-26px;" )
+    
+    (set-on-key-up text-box
+                   (lambda (obj event)
+                     ;; logging
+                     (format t ":key-up, value: ~a~&" (value obj))
+                     ;; zero out the result div
+                     (setf (text results-div) "")
+                     ;; populate the result div
+                     (handle-filter-product results-div obj event))) 
+    
+    (set-on-click submit-button
+                  (lambda (obj)
+                    (setf (text results-div) "") ;; zero out the result div
+                    (setf (place-holder text-box) "Search the site ...")
+                    (setf (value text-box) "") ;; zero aout the text box value
+                    (setf (text results-div) "... the submit button is not connected ...")))))
 
 (defun handle-filter-product (this-div this-obj this-event)
   "Search and redisplay products."
-       (declare (ignorable this-event))
-       (let (
-              (query (value this-obj)) 
-            )
-            (if (> (length query) 2)
-                (display-products this-div (search-products query))
-                (print "waiting for more input"))))
+  (declare (ignorable this-event))
+  (let ((query (value this-obj)))
+    (if (> (length query) 2)
+        (display-products this-div (search-products query))
+        (print "waiting for more input"))))
 
 (defun display-products (this-div products) 
   "Display these products in the page. Create a div per product, with a string to present the product.
    We don't create nice-looking Bulma product cards here."
-       (dolist (n  products)
-               (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n))))) 
+  (dolist (n  products)
+    (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n)))))
 
 ;;;
 ;;;
