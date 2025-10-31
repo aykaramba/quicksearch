@@ -140,9 +140,7 @@ IDEAS - Possible future todo items for the tutorials:
                (container-main (create-div body ))
              )
              ;; Call the view, render into container-main
-             (f-view-main container-main)  
-             ) ;; let*
-       ) ;;defun
+             (f-view-main container-main)))
 
 ;;;
 ;;;
@@ -175,9 +173,7 @@ IDEAS - Possible future todo items for the tutorials:
              ;; Load the instructions text.
              (instructions content-instructions)
              ;; Display some products.
-             (add-products content-results)
-             ) ;; let*
-       ) ;; defun
+             (add-products content-results)))
 
 ;;;
 ;;;
@@ -200,11 +196,9 @@ IDEAS - Possible future todo items for the tutorials:
 (defparameter *title-part-2* (list "book" "car" "laptop" "travel" "screwdriver"))
 
 (defclass product ()
-          (
-            (id    :initarg :id       :accessor product-id       :type integere    :documentation "Unique ID")
-            (title :initarg :title    :accessor product-title    :type string)
-            (price :initarg :price    :accessor product-price    :type integer)
-          )) ;; defclass
+          ((id    :initarg :id       :accessor product-id       :type integere    :documentation "Unique ID")
+           (title :initarg :title    :accessor product-title    :type string)
+           (price :initarg :price    :accessor product-price    :type integer)))
 
 (defun menu (this-frame)
             (let* (
@@ -225,9 +219,7 @@ IDEAS - Possible future todo items for the tutorials:
                   (create-div after-logo :class "w3-center w3-text-white" 
                                          :content "A simple INTEARCTIVE search demo" 
                                          :style "font-family:Montserrat; font-size:21px; font-weight:600; letter-spacing:1px; background-color:#c85007; 
-                                                 margin-top:-20px; padding-left:20px; padding-right:20px; ")
-                  ) ;; let*
-            ) ;; defun
+                                                 margin-top:-20px; padding-left:20px; padding-right:20px; ")))
 
 (defun instructions (this-content)
        (let* (
@@ -248,9 +240,7 @@ IDEAS - Possible future todo items for the tutorials:
                                         :style "width:46px; height:18px; margin-top:24px;")
              (create-div content-hint-2 :content "CAR TRAVEL LITTLE LAPTOP WHITE BLUE BOOK AWESOME PRETTY SCREWDRIVERS "
                                         :style "width:300px; font-size:24px; font-family:Barking Cat DEMO; margin-right:60px; "
-                                        :class "w3-center ")
-             ) ;; let*
-       ) ;; defun
+                                        :class "w3-center ")))
 
 (defun random-price ()
   "Return an integer between 1 and 10.000 (price is expressed in cents)."
@@ -261,9 +251,7 @@ IDEAS - Possible future todo items for the tutorials:
                 (index (random (length *title-part-1*)))
                 (index-2 (random (length *title-part-2*)))
              )
-             (format nil "~a ~a" (elt *title-part-1* index) (elt *title-part-2* index-2))         
-             ) ;; let
-       ) ;; defun
+             (format nil "~a ~a" (elt *title-part-1* index) (elt *title-part-2* index-2))))
 
 (defun generate-test-products (&optional (nb 100))
        (dotimes (i nb)
@@ -271,10 +259,9 @@ IDEAS - Possible future todo items for the tutorials:
                                      :id (incf *product-id*)
                                      :title (random-title)
                                      :price (random-price)
-                                     ) ;; make
-                      *products*) ;; push
-                *products*) ;; dotimes
-       ) ;; defun
+                                     )
+                      *products*)
+                *products*))
 
 (defun reset-test-products ()
        (setf *products* nil)) 
@@ -288,18 +275,13 @@ IDEAS - Possible future todo items for the tutorials:
        (with-output-to-string (s)
                               (format s "Products:~&")
                               (dolist (n products)
-                                      (print-product n s)
-                                      ) ;; dolist
-         ) ;; with
-       ) ;; defun
+                                      (print-product n s))))
 
 (defun search-products (query &optional (products *products*)) 
   "Search for QUERY in the products title. This would be a DB call."
        (loop for product in products
              when (str:containsp (str:downcase query) (str:downcase (product-title product)))
-             collect product
-             ) ;; loop
-       ) ;; defun
+             collect product))
 
 (defun add-products (this-content-results)
   "Create the search input and a div to contain the products.
@@ -335,10 +317,7 @@ IDEAS - Possible future todo items for the tutorials:
                                    (setf (text results-div) "") ;; zero out the result div
                                    (setf (place-holder text-box) "Search the site ...")
                                    (setf (value text-box) "") ;; zero aout the text box value
-                                   (setf (text results-div) "... the submit button is not connected ...")
-                                   )) ;; set-on
-             ) ;; let*
-       ) ;; defun
+                                   (setf (text results-div) "... the submit button is not connected ...")))))
 
 (defun handle-filter-product (this-div this-obj this-event)
   "Search and redisplay products."
@@ -348,18 +327,13 @@ IDEAS - Possible future todo items for the tutorials:
             )
             (if (> (length query) 2)
                 (display-products this-div (search-products query))
-                (print "waiting for more input")
-                ) ;; if
-            ) ;; let
-       ) ;; defun
+                (print "waiting for more input"))))
 
 (defun display-products (this-div products) 
   "Display these products in the page. Create a div per product, with a string to present the product.
    We don't create nice-looking Bulma product cards here."
        (dolist (n  products)
-               (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n)))
-               ) ;; dolist
-       ) ;; defun
+               (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n))))) 
 
 ;;;
 ;;;
