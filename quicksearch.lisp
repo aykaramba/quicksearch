@@ -5,7 +5,7 @@
 ;;;;                      Title: Quicksearch  -  From tutorial
 ;;;;                    Created: 2025-10-26
 ;;;;   Original Tutorial Author: @vindarel (https://lisp-journey.gitlab.io)
-;;;;                   License: GPLv3 or Later
+;;;;                    License: GPLv3 or Later
 ;;;;         Quicksearch Author: Robert Taylor             
 ;;;;                    License: GPLv3 or Later
 ;;;;
