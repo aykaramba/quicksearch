@@ -2,6 +2,8 @@
 
 <img width="800" height="875" alt="quicksearch" src="https://github.com/user-attachments/assets/50c1d4b4-6060-4363-b379-ddee1bc954d2" />
 
+<img width="827" height="886" alt="Screenshot 2025-11-11 at 01-22-56 " src="https://github.com/user-attachments/assets/0bb03463-8270-4ade-82f9-ba4d275393c2" />
+
 This is an attempt to test a quicksearch technique demonstrated in the following tutorial:
 
 Tutorial Link: https://web-apps-in-lisp.github.io/isomorphic-web-frameworks/clog/index.html
