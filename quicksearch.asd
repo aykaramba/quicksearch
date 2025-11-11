@@ -5,7 +5,11 @@
   :version "0.0.0"
   :serial t
   :entry-point "quicksearch:start-app"  
-  :depends-on (#:clog #:str) ; add clog plugins here as #:plugin for run time
+  :depends-on (#:clog 
+               #:str 
+               #:serapeum 
+               #:log4cl
+               ) ; add clog plugins here as #:plugin for run time
   :components ((:file "quicksearch")))
 
 (asdf:defsystem #:quicksearch/tools

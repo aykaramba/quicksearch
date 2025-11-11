@@ -1,11 +1,10 @@
 
-
 ;;;; ================================================================================
 ;;;;
 ;;;;                      Title: Quicksearch  -  From tutorial
 ;;;;                    Created: 2025-10-26
 ;;;;   Original Tutorial Author: @vindarel (https://lisp-journey.gitlab.io)
-;;;;  Original Tutorial License: Waiting for author to provide clarification.
+;;;;  Original Tutorial License: Check with the author.
 ;;;;         Quicksearch Author: Robert Taylor             
 ;;;;        Quicksearch License: GPLv3 or Later
 ;;;;
@@ -51,7 +50,7 @@ If any, the following updates were made to the tutorials
 
 6) For code block delimiters we use EXCESSIVE "top of the block" and "bottom of the block"
    comment segments. In part it helps the author (me) see clearly defined code blocks as
-   well as provide indication of where a program would be split into separate files 
+   well as provide indication of where a program would be split into separate files
    (one block per file) if it ever become complex enough and warrant that type of 
    organization. Not necessary for a trivial demo but it is helpful to keep comment 
    standards consistent accross project.
@@ -63,6 +62,8 @@ If any, the following updates were made to the tutorials
    testing.
 
 8) Fonts used: Pistara Medium, Soda Fountain, Montserrat, Roboto, Headstay, Barking Cat and Chewy.
+
+9) Added a couple of debouncing examples, but additional study and work is required. Review SECTION 06 below.
 
 IDEAS - Possible future todo items for the tutorials:
 
@@ -86,7 +87,20 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;
 
 (defpackage #:quicksearch
-  (:use #:cl #:clog #:clog-web #:str)
+  (:use #:cl #:clog #:clog-web #:str #:serapeum #:log4cl)
+  (:shadowing-import-from    :clog "WORD-WRAP")
+  (:shadowing-import-from    :clog "SELECT")
+  (:shadowing-import-from    :clog "LOG-ERROR")
+  (:shadowing-import-from    :str "ASCII-CHAR-P")
+  (:shadowing-import-from    :str "ENSURE")
+  (:shadowing-import-from    :str "LINES")
+  (:shadowing-import-from    :str "PRUNE")
+  (:shadowing-import-from    :str "CONCAT")
+  (:shadowing-import-from    :str "BLANKP")
+  (:shadowing-import-from    :str "STRING-CASE")
+  (:shadowing-import-from    :str "ENSURE-PREFIX")
+  (:shadowing-import-from    :str "ENSURE-SUFFIX")
+  (:shadowing-import-from    :str "WORDS")
   (:export start-app))
 
 (in-package :quicksearch)
@@ -191,7 +205,6 @@ IDEAS - Possible future todo items for the tutorials:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SECTION 05 - Tutorial
@@ -272,7 +285,7 @@ IDEAS - Possible future todo items for the tutorials:
                 :class "")
     (create-img content-hint-1 :url-src "/img/arrow.webp" 
                 :style "width:46px; height:18px; margin-top:24px;")
-    (create-div content-hint-2 :content "CAR TRAVEL LITTLE LAPTOP WHITE BLUE BOOK AWESOME PRETTY SCREWDRIVERS "
+    (create-div content-hint-2 :content "CAR TRAVEL LITTLE LAPTOP WHITE BLUE BOOK AWESOME PRETTY SCREWDRIVER "
                 :style "width:300px; font-size:24px; font-family:Barking Cat DEMO; margin-right:60px; "
                 :class "w3-center ")))
 
@@ -314,6 +327,31 @@ IDEAS - Possible future todo items for the tutorials:
         when (str:containsp (str:downcase query) (str:downcase (product-title product)))
         collect product))
 
+(defun handle-filter-product (this-div this-obj this-event)
+  "Search and redisplay products."
+  (declare (ignorable this-event))
+  (let ((query (value this-obj)))
+    (if (> (length query) 2)
+        (display-products this-div (search-products query))
+        (print "waiting for more input"))))
+
+(defun display-products (this-div products) 
+  "Display these products in the page. Create a div per product, with a string to present the product.
+   We don't create nice-looking Bulma product cards here."
+  (dolist (n  products)
+    (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n)))))
+
+(defun test (&key one two)
+  ;; (print "hello")
+  (write "hellooooo")
+  ;; (format t "Result: ~a~%" (random 100))
+  )
+
+(defalias throttled-test 
+  (throttle #'(lambda () (test :one :two))  1 )
+  )
+
+
 (defun add-products (this-content-results)
   "Create the search input and a div to contain the products.
    Bind the key-up event of the input field to our filter function."
@@ -342,6 +380,16 @@ IDEAS - Possible future todo items for the tutorials:
                                          border-left-width:0px; border-right-width:0px; border-bottom-width:0px; border-color:white; width:400px; " )))
     
     (create-img ribbon-div :url-src "/img/ribbon.webp" :style "margin-top:-26px;" )
+
+
+    ;; alias version of the function as required by 
+    (defalias throttled-handle-filter-product 
+      (throttle #'(lambda (results-div obj event) (handle-filter-product results-div obj event) ) 
+                0
+                :synchronized 
+                :memoized
+                ))
+  
     
     (set-on-key-up text-box
                    (lambda (obj event)
@@ -349,9 +397,33 @@ IDEAS - Possible future todo items for the tutorials:
                      (format t ":key-up, value: ~a~&" (value obj))
                      ;; zero out the result div
                      (setf (text results-div) "")
-                     ;; populate the result div
-                     (handle-filter-product results-div obj event))) 
-    
+                     ;;
+                     ;;;; START OF THE DEBOUNCING TESTS
+                     ;;;; -----------------------------
+                     ;;;; To test functionality, only uncomment one function at a time.
+                     ;; 
+                     ;; TEST 0 - No debouncing.
+                     ;; --
+                     ;; Original function from the tutorial - populate the results-div.
+                     (handle-filter-product results-div obj event)
+                     ;;
+                     ;; TEST 1 - From example 1 below (SECTION 06)
+                     ;; --
+                     ;; NOTE: I don't know how to use the macro, further study is required
+                     ;; (lambda-debounce results-div obj event)
+                     ;;
+                     ;; TEST 2 - From example 2 below (SECTION 06)
+                     ;; --
+                     ;; (make-debouncer 6 (handle-filter-product results-div obj event))
+                     ;; 
+                     ;; TEST 3 - serapeum
+                     ;; --
+                     ;; (throttled-handle-filter-product results-div obj event)
+                     ;;
+
+                     ))
+
+        
     (set-on-click submit-button
                   (lambda (obj)
                     (setf (text results-div) "") ;; zero out the result div
@@ -359,19 +431,7 @@ IDEAS - Possible future todo items for the tutorials:
                     (setf (value text-box) "") ;; zero aout the text box value
                     (setf (text results-div) "... the submit button is not connected ...")))))
 
-(defun handle-filter-product (this-div this-obj this-event)
-  "Search and redisplay products."
-  (declare (ignorable this-event))
-  (let ((query (value this-obj)))
-    (if (> (length query) 2)
-        (display-products this-div (search-products query))
-        (print "waiting for more input"))))
 
-(defun display-products (this-div products) 
-  "Display these products in the page. Create a div per product, with a string to present the product.
-   We don't create nice-looking Bulma product cards here."
-  (dolist (n  products)
-    (create-div this-div :content (format nil "~a - ~a" (product-id n) (print-product n)))))
 
 ;;;
 ;;;
@@ -379,7 +439,98 @@ IDEAS - Possible future todo items for the tutorials:
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SECTION 06 - debouncing code
+;;; --
+;;; https://dev.to/vindarel/throttledebounce-a-common-lisp-function-2epl
+;;; need to figure out why this works
+
+;; ----------------------------------------------------------------------------------
+;; Example 1 - Copy / paste of code from the tutorial above.
+;;             This is not tested or reviewed. Additional study required.
+;; 
+(defun calculate-internal-time-scaling-millis (&optional (scaling 1000))
+  (if (<= (/ internal-time-units-per-second scaling) 1000) 
+      scaling
+      (calculate-internal-time-scaling-millis (* 10 scaling)))
+  ) ;; defun
+
+(defparameter *internal-time-scaling-millis* (calculate-internal-time-scaling-millis))
+
+(defparameter *debounce-minimum-delay* 120 "milliseconds")
+
+(defun calculate-milliseconds-elapsed ()
+  (truncate (/ (get-internal-real-time) *internal-time-scaling-millis*)))
+
+(defmacro lambda-debounce (args &body body)
+  (alexandria:with-gensyms (last-fired saved-last-fired fired-time results)
+    `(let (
+           (,last-fired (calculate-milliseconds-elapsed))
+           )
+       (lambda ,args
+         (let (
+               (,fired-time (calculate-milliseconds-elapsed))
+               (,saved-last-fired ,last-fired)
+               (,results nil)
+               ) 
+           (log:info ,fired-time ,saved-last-fired (- ,fired-time ,saved-last-fired))
+           (when (> (- ,fired-time ,saved-last-fired) *debounce-minimum-delay*)
+             (log:info "running body…")
+             (setf ,results (progn ,@body))
+             ) ;; when
+           (setf ,last-fired
+                 (calculate-milliseconds-elapsed)
+                 ) ;; setf
+           ,results) ;; let
+         ))) ;; alex
+  
+  ) ;; defun
 
 
+;; ----------------------------------------------------------------------------------
+;; Example 2 - Copy / paste of code from the tutorial above.
+;;             This is not tested or reviewed. Additional study required.
+;; 
+(defun make-debouncer (delay-in-seconds callback)
+  ;; TODO there's probably a bunch of race conditions...
+  (let (
+        (last-time)
+        (thread)
+        (saved-args)
+        )
+    (labels (
+             (now () (/ (get-internal-real-time) #.(float internal-time-units-per-second)))
+             (update-last-time (now) (setf last-time now))
+             (overduep (now) (and last-time (<= delay-in-seconds (- now last-time))))
+             (actually-call (now args) (update-last-time now) (setf thread nil) (apply callback args))
+             (wait-loop () (loop
+                             :for now = (now)
+                             :until (overduep now)
+                             :do (let (
+                                       (delay (max 0.025 (- (+ last-time delay-in-seconds) now)))
+                                       )
+                                   #++ (progn (format *debug-io* "~&About to sleep ~s seconds" delay)
+                                              (force-output *debug-io*))
+                                   (sleep delay)
+                                   ) ;; let
+                             ) ;; loop
+               (actually-call (now) saved-args)
+               ) ;; wait
+             (maybe-funcall (&rest args) 
+               (update-last-time (now))
+               (setf saved-args args)
+               (unless thread (setf thread (bt:make-thread #'wait-loop :name "Debouncer thread")))
+               last-time
+               ) ;; maybe 
+             ) 
+      #'maybe-funcall) ;; labels
+    ) ;; let
+  ) ;; defun
+
+
+;;;
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
